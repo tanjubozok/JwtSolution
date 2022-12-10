@@ -2,7 +2,7 @@
 
 namespace JwtSolution.DataAccess.Abstract
 {
-    public interface IAppUserRoleDal:IGenericDal<AppUserRole>
+    public interface IAppUserRoleDal : IGenericDal<AppUserRole>
     {
     }
 }

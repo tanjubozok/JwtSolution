@@ -8,14 +8,14 @@ namespace JwtSolution.DataAccess.Abstract
 {
     public interface IGenericDal<T> where T : class, IEntity, new()
     {
-        Task<List<T>> GetAll();
-        Task<List<T>> GetAllByFilter(Expression<Func<T, bool>> filter);
+        Task<List<T>> GetAllAsync();
+        Task<List<T>> GetAllByFilterAsync(Expression<Func<T, bool>> filter);
 
-        Task<T> GetById(int id);
-        Task<T> GetByFilter(Expression<Func<T, bool>> filter);
+        Task<T> GetByIdAsync(int id);
+        Task<T> GetByFilterAsync(Expression<Func<T, bool>> filter);
 
-        Task Update(T entity);
-        Task Add(T entity);
-        Task Delete(T entity);
+        Task UpdateAsync(T entity);
+        Task AddAsync(T entity);
+        Task DeleteAsync(T entity);
     }
 }
