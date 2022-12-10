@@ -1,4 +1,6 @@
+using FluentValidation.AspNetCore;
 using JwtSolution.Business.DependencyResolver;
+using JwtSolution.WebAPI.CustomFilters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,8 +22,11 @@ namespace JwtSolution.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDependencies();
+            services.AddScoped(typeof(ValidId<>));
 
-            services.AddControllers();
+            services.AddAutoMapper(typeof(Startup));
+
+            services.AddControllers().AddFluentValidation();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "JwtSolution.WebAPI", Version = "v1" });
@@ -36,11 +41,8 @@ namespace JwtSolution.WebAPI
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "JwtSolution.WebAPI v1"));
             }
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

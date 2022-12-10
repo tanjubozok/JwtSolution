@@ -1,7 +1,10 @@
-﻿using JwtSolution.Business.Abstract;
+﻿using FluentValidation;
+using JwtSolution.Business.Abstract;
 using JwtSolution.Business.Concrete;
+using JwtSolution.Business.ValidationRules.FluentValidation;
 using JwtSolution.DataAccess.Abstract;
 using JwtSolution.DataAccess.Concrete.EfCore.Repositories;
+using JwtSolution.Dtos.ProductDtos;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JwtSolution.Business.DependencyResolver
@@ -24,6 +27,9 @@ namespace JwtSolution.Business.DependencyResolver
 
             services.AddScoped<IProductDal, EfCoreProductRepository>();
             services.AddScoped<IProductService, ProductManager>();
+
+            services.AddTransient<IValidator<ProductAddDto>, ProductAddDtoValidator>();
+            services.AddTransient<IValidator<ProductUpdateDto>, ProductUpdateDtoValidator>();
         }
     }
 }
