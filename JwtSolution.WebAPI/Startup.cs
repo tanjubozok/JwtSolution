@@ -27,12 +27,11 @@ namespace JwtSolution.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDependencies();
-            services.AddScoped(typeof(ValidId<>));
             services.AddAutoMapper(typeof(Startup));
-
+            services.AddScoped(typeof(ValidId<>));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
             {
-                opt.RequireHttpsMetadata = true;
+                opt.RequireHttpsMetadata = false;
                 opt.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidIssuer = JwtInfo.Issuer,
@@ -43,7 +42,6 @@ namespace JwtSolution.WebAPI
                     ClockSkew = TimeSpan.Zero
                 };
             });
-
             services.AddControllers().AddFluentValidation();
             services.AddSwaggerGen(c =>
                 {
@@ -59,14 +57,10 @@ namespace JwtSolution.WebAPI
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "JwtSolution.WebAPI v1"));
             }
-
             app.UseExceptionHandler("/Error");
-
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

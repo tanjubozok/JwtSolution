@@ -15,9 +15,9 @@ namespace JwtSolution.Business.Concrete
         public string GenerateJwt(AppUser appUser, List<AppRole> roles)
         {
             SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(JwtInfo.SecurityKey));
-
+            
             SigningCredentials signingCredentials = new(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-
+            
             JwtSecurityToken jwtSecurityToken = new(
                 issuer: JwtInfo.Issuer,
                 audience: JwtInfo.Audience,
@@ -26,13 +26,12 @@ namespace JwtSolution.Business.Concrete
                 signingCredentials: signingCredentials,
                 claims: GetClaims(appUser, roles)
                 );
-
             JwtSecurityTokenHandler handler = new();
 
             return handler.WriteToken(jwtSecurityToken);
         }
 
-        private List<Claim> GetClaims(AppUser appUser, List<AppRole> roles)
+        private static List<Claim> GetClaims(AppUser appUser, List<AppRole> roles)
         {
             List<Claim> claims = new()
             {
@@ -40,11 +39,11 @@ namespace JwtSolution.Business.Concrete
                 new Claim(ClaimTypes.NameIdentifier, appUser.Id.ToString())
             };
 
-            if (roles.Count > 0)
+            if (roles?.Count > 0)
             {
-                foreach (var item in roles)
+                foreach (var role in roles)
                 {
-                    claims.Add(new Claim(ClaimTypes.Role, item.Name));
+                    claims.Add(new Claim(ClaimTypes.Role, role.Name));
                 }
             }
 
