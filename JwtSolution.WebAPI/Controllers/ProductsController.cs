@@ -61,5 +61,12 @@ namespace JwtSolution.WebAPI.Controllers
             await _productService.DeleteAsync(product);
             return NoContent();
         }
+
+        [Route("/error")]
+        public IActionResult Error()
+        {
+            var errorLog = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            return Problem(detail: "Apide bir problem oldu, en kısa sürede düzelecektir.");
+        }
     }
 }

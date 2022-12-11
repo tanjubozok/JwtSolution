@@ -4,6 +4,7 @@ using JwtSolution.Business.Concrete;
 using JwtSolution.Business.ValidationRules.FluentValidation;
 using JwtSolution.DataAccess.Abstract;
 using JwtSolution.DataAccess.Concrete.EfCore.Repositories;
+using JwtSolution.Dtos.AppUserDtos;
 using JwtSolution.Dtos.ProductDtos;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,6 +31,10 @@ namespace JwtSolution.Business.DependencyResolver
 
             services.AddTransient<IValidator<ProductAddDto>, ProductAddDtoValidator>();
             services.AddTransient<IValidator<ProductUpdateDto>, ProductUpdateDtoValidator>();
+
+            services.AddTransient<IValidator<AppUserLoginDto>, AppUserLoginValidator>();
+
+            services.AddScoped<IJwtService, JwtManager>();
         }
     }
 }
