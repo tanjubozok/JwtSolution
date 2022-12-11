@@ -15,9 +15,9 @@ namespace JwtSolution.Business.Concrete
         public string GenerateJwt(AppUser appUser, List<AppRole> roles)
         {
             SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(JwtInfo.SecurityKey));
-            
+
             SigningCredentials signingCredentials = new(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-            
+
             JwtSecurityToken jwtSecurityToken = new(
                 issuer: JwtInfo.Issuer,
                 audience: JwtInfo.Audience,

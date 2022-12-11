@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using JwtSolution.Business.Abstract;
+using JwtSolution.Business.StringInfos;
 using JwtSolution.Dtos.ProductDtos;
 using JwtSolution.Entities.Concrete;
 using JwtSolution.WebAPI.CustomFilters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -23,6 +25,7 @@ namespace JwtSolution.WebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = RoleInfo.Admin + "," + RoleInfo.Member)]
         public async Task<IActionResult> GetAll()
         {
             var list = await _productService.GetAllAsync();
@@ -30,6 +33,7 @@ namespace JwtSolution.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = RoleInfo.Member)]
         [ServiceFilter(typeof(ValidId<Product>))]
         public async Task<IActionResult> GetById(int id)
         {
@@ -38,6 +42,7 @@ namespace JwtSolution.WebAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleInfo.Admin)]
         [ValidModel]
         public async Task<IActionResult> Create(ProductAddDto productAddDto)
         {
@@ -46,6 +51,7 @@ namespace JwtSolution.WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RoleInfo.Admin)]
         [ValidModel]
         public async Task<IActionResult> Update(ProductUpdateDto productUpdateDto)
         {
@@ -54,6 +60,7 @@ namespace JwtSolution.WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RoleInfo.Admin)]
         [ServiceFilter(typeof(ValidId<Product>))]
         public async Task<IActionResult> Delete(int id)
         {
@@ -66,7 +73,7 @@ namespace JwtSolution.WebAPI.Controllers
         public IActionResult Error()
         {
             var errorLog = HttpContext.Features.Get<IExceptionHandlerPathFeature>().Error;
-            
+
             var data = errorLog.Data;
             var helpLink = errorLog.HelpLink;
             var hResult = errorLog.HResult;

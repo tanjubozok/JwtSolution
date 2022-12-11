@@ -12,15 +12,16 @@ namespace JwtSolution.DataAccess.Concrete.EfCore.Repositories
     {
         public Task<List<AppRole>> GetRolesByUsername(string username)
         {
-            using DatabaseContext context = new();
+            DatabaseContext context = new();
             var roles = (from u in context.AppUsers
                          join ur in context.AppUserRoles on u.Id equals ur.AppUserId
                          join r in context.AppRoles on ur.AppRoleId equals r.Id
+                         where r.Name == username
                          select new AppRole
                          {
                              Id = r.Id,
                              Name = r.Name
-                         }).Where(x => x.Name == username);
+                         });
 
             return roles.ToListAsync();
         }

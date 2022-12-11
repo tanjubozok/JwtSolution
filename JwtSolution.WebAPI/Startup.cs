@@ -54,12 +54,12 @@ namespace JwtSolution.WebAPI
         {
             if (env.IsDevelopment())
             {
-                //app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "JwtSolution.WebAPI v1"));
             }
             app.UseExceptionHandler("/Error");
-            
+
             JwtIdentityInitializer.Seed(appUserService, appUserRoleService, appRoleService).Wait();
 
             app.UseRouting();

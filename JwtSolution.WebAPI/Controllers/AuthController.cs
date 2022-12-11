@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using JwtSolution.Business.Abstract;
+using JwtSolution.Business.StringInfos;
 using JwtSolution.Dtos.AppUserDtos;
+using JwtSolution.Dtos.Token;
 using JwtSolution.Entities.Concrete;
 using JwtSolution.WebAPI.CustomFilters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace JwtSolution.WebAPI.Controllers
@@ -15,14 +19,16 @@ namespace JwtSolution.WebAPI.Controllers
         private readonly IJwtService _jwtService;
         private readonly IAppUserService _appUserService;
         private readonly IAppRoleService _appRoleService;
+        private readonly IAppUserRoleService _appUserRoleService;
         private readonly IMapper _mapper;
 
-        public AuthController(IJwtService jwtService, IAppUserService appUserService, IAppRoleService appRoleService, IMapper mapper)
+        public AuthController(IJwtService jwtService, IAppUserService appUserService, IAppRoleService appRoleService, IMapper mapper, IAppUserRoleService appUserRoleService)
         {
             _jwtService = jwtService;
             _appUserService = appUserService;
             _appRoleService = appRoleService;
             _mapper = mapper;
+            _appUserRoleService = appUserRoleService;
         }
 
         [HttpPost("[action]")]
@@ -37,7 +43,12 @@ namespace JwtSolution.WebAPI.Controllers
                     var roles = await _appRoleService.GetRolesByUsername(appUserLoginDto.Username);
                     var token = _jwtService.GenerateJwt(appUser, roles);
 
-                    return Created("", token);
+                    JwtAccessToken jwtAccessToken = new()
+                    {
+                        Token = token
+                    };
+
+                    return Created("", jwtAccessToken);
                 }
             }
             return BadRequest("Kullanıcı adı veya şifre hatalıdır");
@@ -45,7 +56,9 @@ namespace JwtSolution.WebAPI.Controllers
 
         [HttpPost("[action]")]
         [ValidModel]
-        public async Task<IActionResult> SignUp(AppUserAddDto appUserAddDto)
+        public async Task<IActionResult> SignUp(AppUserAddDto appUserAddDto,
+            [FromServices] IAppUserRoleService appUserRoleService,
+            [FromServices] IAppRoleService appRoleService)
         {
             var appUser = await _appUserService.FindByUsername(appUserAddDto.Username);
             if (appUser != null)
@@ -54,7 +67,31 @@ namespace JwtSolution.WebAPI.Controllers
             }
             await _appUserService.AddAsync(_mapper.Map<AppUser>(appUserAddDto));
 
+            var user = await _appUserService.FindByUsername(appUserAddDto.Username);
+            var role = await _appRoleService.FindByName(RoleInfo.Member);
+            await _appUserRoleService.AddAsync(new AppUserRole
+            {
+                AppRoleId = role.Id,
+                AppUserId = user.Id
+            });
+
             return Created("", appUserAddDto);
+        }
+
+
+        [HttpGet("[action]")]
+        [Authorize]
+        public async Task<IActionResult> ActiveUser()
+        {
+            var user = await _appUserService.FindByUsername(User.Identity.Name);
+            var roles = await _appRoleService.GetRolesByUsername(User.Identity.Name);
+            AppUserDto appUserDto = new AppUserDto
+            {
+                Fullname = user.Fullname,
+                Username = user.Username,
+                Roles = roles.Select(x => x.Name).ToList()
+            };
+            return Ok(appUserDto);
         }
     }
 }
