@@ -1,4 +1,5 @@
 using FluentValidation.AspNetCore;
+using JwtSolution.Business.Abstract;
 using JwtSolution.Business.DependencyResolver;
 using JwtSolution.Business.StringInfos;
 using JwtSolution.WebAPI.CustomFilters;
@@ -49,7 +50,7 @@ namespace JwtSolution.WebAPI
                 });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IAppUserService appUserService, IAppUserRoleService appUserRoleService, IAppRoleService appRoleService)
         {
             if (env.IsDevelopment())
             {
@@ -58,6 +59,9 @@ namespace JwtSolution.WebAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "JwtSolution.WebAPI v1"));
             }
             app.UseExceptionHandler("/Error");
+            
+            JwtIdentityInitializer.Seed(appUserService, appUserRoleService, appRoleService).Wait();
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

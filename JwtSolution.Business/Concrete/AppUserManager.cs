@@ -18,7 +18,7 @@ namespace JwtSolution.Business.Concrete
         public async Task<bool> CheckPassword(AppUserLoginDto appUserLoginDto)
         {
             var username = await _appUserDal.GetByFilterAsync(x => x.Username == appUserLoginDto.Username);
-            return username.Password == appUserLoginDto.Password;
+            return  username.Password == appUserLoginDto.Password;
         }
 
         public async Task<AppUser> FindByUsername(string username)

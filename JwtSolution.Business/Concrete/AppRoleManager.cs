@@ -15,6 +15,11 @@ namespace JwtSolution.Business.Concrete
             _appRoleDal = appRoleDal;
         }
 
+        public async Task<AppRole> FindByName(string role)
+        {
+            return await _appRoleDal.GetByFilterAsync(x => x.Name == role);
+        }
+
         public Task<List<AppRole>> GetRolesByUsername(string username)
         {
             return _appRoleDal.GetRolesByUsername(username);
