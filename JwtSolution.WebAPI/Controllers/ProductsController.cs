@@ -65,7 +65,17 @@ namespace JwtSolution.WebAPI.Controllers
         [Route("/error")]
         public IActionResult Error()
         {
-            var errorLog = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            var errorLog = HttpContext.Features.Get<IExceptionHandlerPathFeature>().Error;
+            
+            var data = errorLog.Data;
+            var helpLink = errorLog.HelpLink;
+            var hResult = errorLog.HResult;
+            var innerException = errorLog.InnerException;
+            var message = errorLog.Message;
+            var source = errorLog.Source;
+            var stackTrace = errorLog.StackTrace;
+            var targetSite = errorLog.TargetSite;
+
             return Problem(detail: "Apide bir problem oldu, en kısa sürede düzelecektir.");
         }
     }

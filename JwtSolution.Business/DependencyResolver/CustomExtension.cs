@@ -18,23 +18,20 @@ namespace JwtSolution.Business.DependencyResolver
             services.AddScoped(typeof(IGenericDal<>), typeof(EfCoreGenericRepository<>));
 
             services.AddScoped<IAppUserDal, EfCoreAppUserRepository>();
-            services.AddScoped<IAppUserService, AppUserManager>();
-
             services.AddScoped<IAppUserRoleDal, EfCoreAppUserRoleRepository>();
-            services.AddScoped<IAppUserRoleService, AppUserRoleManager>();
-
             services.AddScoped<IAppRoleDal, EfCoreAppRoleRepository>();
-            services.AddScoped<IAppRoleService, AppRoleManager>();
-
             services.AddScoped<IProductDal, EfCoreProductRepository>();
+
+            services.AddScoped<IAppUserService, AppUserManager>();
+            services.AddScoped<IAppUserRoleService, AppUserRoleManager>();
+            services.AddScoped<IAppRoleService, AppRoleManager>();
             services.AddScoped<IProductService, ProductManager>();
+            services.AddScoped<IJwtService, JwtManager>();
 
             services.AddTransient<IValidator<ProductAddDto>, ProductAddDtoValidator>();
             services.AddTransient<IValidator<ProductUpdateDto>, ProductUpdateDtoValidator>();
-
             services.AddTransient<IValidator<AppUserLoginDto>, AppUserLoginValidator>();
-
-            services.AddScoped<IJwtService, JwtManager>();
+            services.AddTransient<IValidator<AppUserAddDto>, AppUserAddDtoValidator>();
         }
     }
 }
